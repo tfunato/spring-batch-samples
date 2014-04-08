@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:batch="http://www.springframework.org/schema/batch"
+	xmlns:hdp="http://www.springframework.org/schema/hadoop" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	  http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+	  http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	  	  http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+  	  http://www.springframework.org/schema/hadoop http://www.springframework.org/schema/hadoop/spring-hadoop.xsd">
+  	  
+  	  
+	<batch:job id="mapReduceJob">
+		<batch:step id="wordCountStep">
+			<batch:tasklet ref="wordCountTasklet"/>
+		</batch:step>
+	</batch:job>
+  	  
+    <bean id="wordCountTasklet" class="org.springframework.data.hadoop.mapreduce.ToolTasklet">
+    	<property name="tool">
+    		<bean class="jp.canetrash.springbatch.samples.hadoop.mapreduce.WordCountDriver"/>
+    	</property>
+    </bean>
+  	  
+  	  
+  	<!-- /// Spring Batch infrastructure /// -->
+	<bean id="transactionManager"
+		class="org.springframework.batch.support.transaction.ResourcelessTransactionManager" />
+
+	<bean id="jobRepository"
+		class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean" />
+
+	<bean id="jobLauncher"
+		class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
+		<property name="jobRepository" ref="jobRepository" />
+	</bean>
+</beans>

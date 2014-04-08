@@ -9,11 +9,11 @@ configure(allprojects) { project ->
 	ext.gradleScriptDir = "${rootProject.projectDir}/gradle"
 
 	apply plugin: "java"
-    apply plugin: 'eclipse-wtp'
+    apply plugin: 'eclipse'
     sourceSets {
        main {
           java {
-               srcDir 'src'
+               srcDir 'java'
           }
           resources {
                srcDir 'resources'
@@ -21,7 +21,7 @@ configure(allprojects) { project ->
        }
        test {
           java {
-               srcDir 'test'
+               srcDir 'java'
           }
           resources {
                srcDir 'testResources'
@@ -103,6 +103,11 @@ configure(allprojects) { project ->
 
 configure(subprojects) { subproject ->
 
+	dependencies {
+        compile('org.springframework.batch:spring-batch-core:2.2.5.RELEASE')
+	}
+
+
 	jar {
 		manifest.attributes["Created-By"] =
 			"${System.getProperty("java.version")} (${System.getProperty("java.specification.vendor")})"
@@ -117,7 +122,6 @@ configure(subprojects) { subproject ->
 		options.author = true
 		options.header = project.name
 		options.links(project.ext.javadocLinks)
-		options.addStringOption('Xdoclint:none', '-quiet')
 
 		logging.captureStandardError LogLevel.INFO
 		logging.captureStandardOutput LogLevel.INFO // suppress "## warnings" message
@@ -147,10 +151,6 @@ configure(rootProject) {
 
 	configurations.archives.artifacts.clear()
 
-	dependencies {
-        compile 'org.springframework.batch:spring-batch-core:2.2.5.RELEASE'    
-	}
-
 	task api(type: Javadoc) {
 		group = "Documentation"
 		description = "Generates aggregated Javadoc API documentation."
@@ -168,7 +168,6 @@ configure(rootProject) {
 		options.stylesheetFile = file("src/api/stylesheet.css")
 		options.splitIndex = true
 		options.links(project.ext.javadocLinks)
-		options.addStringOption('Xdoclint:none', '-quiet')
 
 		source subprojects.collect { project ->
 			project.sourceSets.main.allJava
@@ -195,10 +194,14 @@ configure(rootProject) {
 	}
 }
 
-project("spring-batch-hadoop") {
+project(":spring-batch-hadoop") {
+    apply plugin:'application'
     description = "Spring Batch Hadoop"
  
  	dependencies {
-         compile 'org.springframework.data:spring-data-hadoop:1.0.2.RELEASE-hadoop22'    
+        compile("org.springframework.data:spring-data-hadoop:1.0.2.RELEASE-hadoop22")
+		testCompile("org.apache.mrunit:mrunit:1.0.0:hadoop2")
     }
+    mainClassName = "org.springframework.batch.core.launch.support.CommandLineJobRunner"
+
 }
