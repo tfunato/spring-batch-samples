@@ -13,18 +13,18 @@ configure(allprojects) { project ->
     sourceSets {
        main {
           java {
-               srcDir 'src'
+               srcDir 'src/java'
           }
           resources {
-               srcDir 'resources'
+               srcDir 'src/resources'
           }      
        }
        test {
           java {
-               srcDir 'test'
+               srcDir 'src/java'
           }
           resources {
-               srcDir 'testResources'
+               srcDir 'src/resources'
           }
        }
     }
@@ -71,6 +71,7 @@ configure(allprojects) { project ->
 
     repositories {
         mavenCentral()
+		maven { url "https://repository.cloudera.com/artifactory/repo/" }
     }
 
 	dependencies {
@@ -200,5 +201,6 @@ project("spring-batch-hadoop") {
  
  	dependencies {
          compile 'org.springframework.data:spring-data-hadoop:1.0.2.RELEASE-hadoop22'    
+		 compile "org.springframework.data:spring-yarn-batch:2.0.0.RELEASE"
     }
 }
