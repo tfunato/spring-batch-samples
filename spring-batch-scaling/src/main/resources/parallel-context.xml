@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <job id="parallelJob" xmlns="http://www.springframework.org/schema/batch">
+	    <split id="splitedStep" task-executor="taskExecutor">
+	        <flow>
+	            <step id="step1" >
+	            	<tasklet ref="tasklet1" />
+	            </step>
+	        </flow>
+	        <flow>
+	            <step id="step2">
+	            	<tasklet ref="tasklet2" />
+            	</step>
+	        </flow>
+	        <flow>
+	            <step id="step3">
+	            	<tasklet ref="tasklet3" />
+            	</step>
+	        </flow>
+	    </split>
+    </job>
+    <bean id="taskExecutor" class="org.springframework.core.task.SimpleAsyncTaskExecutor" />
+    
+    <bean id="tasklet1" class="jp.canetrash.springbatch.samples.scaling.parallel.SampleTasklet" scope="step">
+    	<property name="sleep" value="1000"/>
+    	<property name="counter" value="5"/>
+    </bean>
+    <bean id="tasklet2" class="jp.canetrash.springbatch.samples.scaling.parallel.SampleTasklet" scope="step">
+    	<property name="sleep" value="1000"/>
+    	<property name="counter" value="5"/>
+    </bean>
+    <bean id="tasklet3" class="jp.canetrash.springbatch.samples.scaling.parallel.SampleTasklet" scope="step">
+    	<property name="sleep" value="1000"/>
+    	<property name="counter" value="5"/>
+    </bean>
+
+	<!-- In memory job repository no log -->
+	<bean id="jobRepository" class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean">
+	    <property name="transactionManager" ref="transactionManager"/>
+	</bean>
+
+	<bean id="jobLauncher"
+		class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
+		<property name="jobRepository" ref="jobRepository" />
+	</bean>
+
+	<bean id="transactionManager"
+		class="org.springframework.batch.support.transaction.ResourcelessTransactionManager" />
+</beans>
