@@ -132,3 +132,11 @@ project("spring-batch-hadoop") {
 project("spring-batch-scaling") {
     description = "Spring Batch Scaling"
 }
+
+project("spring-batch-transaction") {
+    description = "Spring Batch Transaction"
+ 	dependencies {
+        compile 'org.postgresql:postgresql:9.2-1004-jdbc41'
+        compile 'org.springframework:spring-jdbc:3.2.0.RELEASE'
+    }
+}

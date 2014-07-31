@@ -2,3 +2,4 @@ rootProject.name = "spring-batch-samples"
 
 include "spring-batch-hadoop"
 include "spring-batch-scaling"
+include "spring-batch-transaction"
